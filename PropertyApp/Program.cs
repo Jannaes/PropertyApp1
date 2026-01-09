@@ -16,6 +16,8 @@ using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 // configure console logging (optional — Console provider is present by default in typical templates)
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -36,6 +38,7 @@ builder.Services.AddSession(options =>
 var keyVaultUrl = builder.Configuration["KeyVault:VaultUrl"];
 
 var keyVaultSecretName = builder.Configuration["KeyVault:VaultSecretName"];
+
 
 string logthis;
 
@@ -58,7 +61,9 @@ if (!string.IsNullOrEmpty(keyVaultUrl) && !string.IsNullOrEmpty(keyVaultSecretNa
 {
     var secretClient = new SecretClient(new Uri(keyVaultUrl), new DefaultAzureCredential());
     var secretResponse = await secretClient.GetSecretAsync(keyVaultSecretName);
+
     var connectionString = secretResponse.Value.Value;
+
 
     // set configuration value (so calls later that read configuration see it.
     // Later call will be done in PropertyApp\Data\PropertyContext.cs with name="Dbproperty")
@@ -67,8 +72,9 @@ if (!string.IsNullOrEmpty(keyVaultUrl) && !string.IsNullOrEmpty(keyVaultSecretNa
     // use the connection string directly to register DbContext (or read it later)
     builder.Services.AddDbContext<PropertyContext>(options =>
         options.UseSqlServer(connectionString));
-   
-    logthis = "Azure connection string: " + connectionString;
+
+    //logthis = "Azure connection string: " + connectionString;
+    logthis = "Azure connection string loaded from Key Vault.";
 }
 else
 {
@@ -78,10 +84,19 @@ else
          options.UseSqlServer(builder.Configuration.GetConnectionString("Dbproperty")));
 }
 
+
 // bind DevelopmentVariables section so it can be injected via IOptions<T>
 builder.Services.Configure<DevelopmentVariables>(builder.Configuration.GetSection("DevelopmentVariables"));
 
 var app = builder.Build();
+
+//app.Logger.LogInformation(
+//    "Using KeyVault secret: {SecretName}",
+//    keyVaultSecretName ?? "(null)"
+//);
+
+//app.Logger.LogInformation("Key Vault secret FOUND");
+
 
 // Simple request logging middleware to help debug why Login POST may not reach the handler
 //app.Use(async (context, next) =>
