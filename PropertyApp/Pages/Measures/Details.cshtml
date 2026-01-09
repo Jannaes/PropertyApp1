@@ -1,0 +1,44 @@
+﻿@page
+@model PropertyApp.Pages.Measures.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Measure</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Measure.Amount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Measure.Amount)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Measure.Date)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Measure.Date)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Measure.IdMeasureDeviceNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Measure.IdMeasureDeviceNavigation.IdMeasureDevice)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Measure.IdUserNavigation)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Measure.IdUserNavigation.IdUser)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Measure.MeasureId">Edit</a> |
+@*     <a asp-page="./Index">Back to List</a> *@
+    <a asp-page="./Index" asp-route-idMeasureDevice="@Model.Measure.IdMeasureDevice">Back to List</a>
+</div>

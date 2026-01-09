@@ -1,0 +1,66 @@
+﻿@page
+@model PropertyApp.Pages.Properties.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Property[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Property[0].Streetname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Property[0].Streetnumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Property[0].Postcode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Property[0].PostOfficeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Property[0].IdUser)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Property) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Streetname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Streetnumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Postcode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostOfficeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdUser)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.IdProperty">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.IdProperty">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.IdProperty">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

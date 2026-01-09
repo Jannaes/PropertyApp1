@@ -1,0 +1,58 @@
+﻿@page
+@model PropertyApp.Pages.Properties.CreateModel
+
+        @{
+        ViewData["Title"] = "Create";
+        }
+        
+        <h1>Create</h1>
+        
+    <h4>Property</h4>
+    <hr />
+    <div class="row">
+    <div class="col-md-4">
+    <form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Property.IdUser" class="control-label"></label>
+                <select asp-for="Property.IdUser" class ="form-control" asp-items="ViewBag.IdUser"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Property.Name" class="control-label"></label>
+                <input asp-for="Property.Name" class="form-control" />
+                <span asp-validation-for="Property.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Property.Streetname" class="control-label"></label>
+                <input asp-for="Property.Streetname" class="form-control" />
+                <span asp-validation-for="Property.Streetname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Property.Streetnumber" class="control-label"></label>
+                <input asp-for="Property.Streetnumber" class="form-control" />
+                <span asp-validation-for="Property.Streetnumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Property.Postcode" class="control-label"></label>
+                <input asp-for="Property.Postcode" class="form-control" />
+                <span asp-validation-for="Property.Postcode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Property.PostOfficeName" class="control-label"></label>
+                <input asp-for="Property.PostOfficeName" class="form-control" />
+                <span asp-validation-for="Property.PostOfficeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

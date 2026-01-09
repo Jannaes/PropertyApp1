@@ -1,0 +1,149 @@
+﻿@page
+@model PropertyApp.Pages.Measures.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@* <h1>Measurements</h1> *@
+<br>
+
+
+@*------------------ Mittarin tiedot:------------------------- *@
+
+<h1><strong><i class="bi @GetIcon(Model.CurrentDevice.DeviceType)"></i> @FormatDeviceName(@Model.CurrentDevice.DeviceType)</strong></h1>
+<br>
+<p><strong>Meter ID:</strong> @Model.IdMeasureDevice</p>
+
+@*---------- Mittareiden kuvakkeet määräytyvät mittarin nimen perusteella:------------ *@
+
+@functions {
+    string GetIcon(string type)
+    {
+        return type switch
+        {
+            "water-hot" => "bi-thermometer-sun",
+            "water-cold" => "bi-thermometer-snow",
+            "electricity" => "bi-lightning-charge",
+            "heating" => "bi-fire",
+            _ => ""
+        };
+    }
+}
+
+@* -------------Muotoilee mittarin nimen alkamaan isolla kirjaimella--------- *@
+
+@functions {
+    string FormatDeviceName(string raw)
+    {
+        return string.Join(" ",
+            raw.Split('-', '_')
+               .Select(s => char.ToUpper(s[0]) + s.Substring(1)));
+    }
+}
+
+<h6> @Model.Property?.Name</h6>
+<p class="text">
+    @Model.Apartment?.IdPropertyNavigation?.Streetname
+    @Model.Apartment?.IdPropertyNavigation?.Streetnumber
+    @if (!string.IsNullOrWhiteSpace(Model.Apartment?.StaircaseDoor))
+    {
+        <span> @Model.Apartment.StaircaseDoor</span>
+    }
+    <br />
+    @Model.Apartment?.IdPropertyNavigation?.Postcode
+    @Model.Apartment?.IdPropertyNavigation?.PostOfficeName
+</p>
+
+@*-------- Lomake uuden mittauksen lisäämiseen:--------- *@
+
+<br>
+
+<h5>Add measurement</h5>
+
+<div class="container">
+    <div class="row justify-content-left">
+        <div class="col-md-6">
+            <form method="post" class="mb-4">
+                <div class="mb-3">
+                    <label for="Amount">Amount</label>
+                    <input type="number" step="0.01" asp-for="Amount" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label for="NewDate">Date</label>
+                    <input type="date" asp-for="NewDate" class="form-control" required />
+                </div>
+                <button type="submit" class="btn btn-success">Add</button>
+            </form>
+
+
+
+@* --------Taulukko aiemmista mittauksista:---------- *@
+            <div style="max-height: 400px; overflow-y: auto;">  @* Scroll-bar *@
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-light" style="position: sticky; top: 0; background-color: white; z-index: 10;">
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Measures[0].Amount)</th>
+                            <th>@Html.DisplayNameFor(model => model.Measures[0].Date)</th>
+                            <th>Change to previous</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Measures)
+                        {
+                            <tr>
+                                <td> @Html.DisplayFor(modelItem => item.Amount)</td>
+                                <td> @Html.DisplayFor(modelItem => item.Date)</td>
+                                <td>
+                                   @if (item.Change != null)
+                                    {
+                                        @($"{item.Change:0.##}")
+                                    }
+                                    else
+                                    {
+                                         <text>-</text>
+                                    }
+                                </td>
+
+                                <td>
+                                    <a asp-page="./Edit" asp-route-id="@item.MeasureId" class="text-primary me-3" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-page="./Delete" asp-route-id="@item.MeasureId" class="text-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+
+                @*                 <td>
+                                    <a asp-page="./Edit" asp-route-id="@item.MeasureId">Edit</a> |
+                                    <a asp-page="./Details" asp-route-id="@item.MeasureId">Details</a> |
+                                    <a asp-page="./Delete" asp-route-id="@item.MeasureId">Delete</a>
+                                </td> *@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+
+@* ------------Back-nappi takaisin MeasureDevices-sivulle:------------------*@
+
+<div class="d-flex justify-content-start">
+    <a asp-page="/Charts/Charts" asp-route-id="@Model.IdMeasureDevice" class="btn btn-primary me-2">
+        <i class="bi bi-bar-chart"></i> Chart
+    </a>
+
+    <a asp-page="/Apartments/Details" asp-route-id="@Model.IdApartment" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+</div>
+
+@* <a asp-page="/Charts/Charts" asp-route-IdMeasureDevice="@Model.IdMeasureDevice" class="btn btn-primary me-2">
+    <i class="bi bi-bar-chart"></i> Chart
+</a> *@

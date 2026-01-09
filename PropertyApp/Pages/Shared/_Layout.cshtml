@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SmartUs</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PropertyApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"> @* lisätty *@
+
+    @* flatpickr CSS loaded once for the whole app *@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+</head>
+
+<body>
+    @{
+        // Read session values. If you store the user's email in session under a different key, update the key name here.
+        var idCurrentUser = Context?.Session?.GetInt32("IdCurrentUser");
+        var emailCurrentUser = Context?.Session?.GetString("EmailCurrentUser");
+    }
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-page="/Index">SmartUs</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        @* left-side nav items (kept for development) *@
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+                        </li> *@
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+                        </li> *@
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Users/Index">Users</a>
+                        </li> *@
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Properties/Index">Properties</a>
+                        </li> *@
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Apartments/Index">Apartments</a>
+                        </li> *@
+                        @* <li class="nav-item">
+                            <a class="nav-link" asp-page="/Apartments/NewApartmentOrProperty">Create Apartment</a>
+                        </li> *@
+@*                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Measures/Index">Measures</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/MeasureDevices/Index">Devices</a>
+                        </li> // kommentoitu, koska linkit eivät vie enää oikeaan paikkaan*@
+                        @* <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/Charts/Charts">Charts</a>
+                        </li> *@
+                    </ul>
+
+                    @* Right-aligned auth links *@
+                    <ul class="navbar-nav ms-auto">
+                        @if (idCurrentUser == null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Users/Create">Register</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Users/Login">Login</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Users/Edit" asp-route-id="@idCurrentUser">@(!string.IsNullOrEmpty(emailCurrentUser) ? emailCurrentUser : "User")</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-page="/Users/Logout">Logout</a>
+                            </li>
+                        }
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - SmartUs - Smart monitoring for smart usage of home utilities <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @* flatpickr JS loaded once for the whole app *@
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        // Initialize flatpickr instances on inputs[type="date"].
+        // Default configuration: post ISO date (Y-m-d) while showing dd.mm.Y to user.
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof flatpickr === 'undefined') return;
+
+            // select native date inputs that are visible
+            var dateInputs = Array.from(document.querySelectorAll('input[type="date"]')).filter(function(el) {
+                // ignore inputs already replaced by flatpickr (flatpickr sets _flatpickr)
+                return !el._flatpickr;
+            });
+
+            dateInputs.forEach(function (el) {
+                // preserve attributes needed for server binding (name, id)
+                flatpickr(el, {
+                    dateFormat: 'Y-m-d',    // value posted to server (ISO)
+                    altInput: true,         // show alternate input to user
+                    altFormat: 'd.m.Y',     // visible format: 31.12.2025
+                    allowInput: true,
+                    defaultDate: el.value && el.value.length ? el.value : null
+                });
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>
+
+@* Testi *@
+@* Testi 2 *@
+@* Testi db *@
+@* Testi Daryna *@
+@* Testi branch update *@

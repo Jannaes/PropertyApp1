@@ -1,0 +1,197 @@
+﻿@page
+@model PropertyApp.Pages.Apartments.NewApartmentOrPropertyModel
+
+@{
+    ViewData["Title"] = "New Apartment";
+}
+<h1>New Apartment or Property</h1>
+<hr />
+
+<div class="container d-flex flex-column align-items-center">
+
+<!-- Kuva -->
+<div class="card mb-3 w-100" style="max-width: 300px;">
+        <div class="ratio ratio-4x3 position-relative overflow-hidden">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/55/home-152619_1280.png"
+                 class="img-fluid w-100 h-100 object-fit-cover" />
+        </div>
+    </div>
+
+<!-- Radio buttons -->
+<div class="mb-3">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" id="optHouse" name="SelectType" value="House" />
+            <label class="form-check-label" for="optHouse">Single House</label>
+        </div>
+
+        <div class="form-check mt-2">
+            <input class="form-check-input" type="radio" id="optApartment" name="SelectType" value="Apartment" />
+            <label class="form-check-label" for="optApartment">Apartment</label>
+        </div>
+    </div>
+</div>
+
+<!-- Apartment Form -->
+<div class="row justify-content-center">
+    <div id="apartmentForm" class="col-md-4 d-none">
+        <form method="post" asp-page-handler="Apartment">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <!-- Select property -->
+            <div class="form-group mb-3">
+                <label asp-for="Apartment.IdProperty">Select Property</label>
+                <select asp-for="Apartment.IdProperty" asp-items="Model.UserProperties" class="form-control">
+                    <option value="">-- Select your property --</option>
+                </select>
+                <span asp-validation-for="Apartment.IdProperty" class="text-danger"></span>
+            </div>
+
+            <!-- Checkbox = create new property -->
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="createNewProperty" asp-for="CreateNewProperty" />
+                <label class="form-check-label" for="createNewProperty">
+                    Create new property
+                </label>
+            </div>
+
+            <!-- New property fields (hidden by default) -->
+            <div id="newPropertyFields" class="d-none border rounded p-3 mb-3">
+                <h5 class="mb-3">New Property</h5>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Property.Name"></label>
+                    <input asp-for="Property.Name" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Property.Streetname"></label>
+                    <input asp-for="Property.Streetname" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Property.Streetnumber"></label>
+                    <input asp-for="Property.Streetnumber" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Property.Postcode"></label>
+                    <input asp-for="Property.Postcode" class="form-control" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Property.PostOfficeName"></label>
+                    <input asp-for="Property.PostOfficeName" class="form-control" />
+                </div>
+            </div>
+
+            <!-- Apartment fields -->
+            <div class="form-group mb-3">
+                <label asp-for="Apartment.StaircaseDoor" class="form-label"></label>
+                <input asp-for="Apartment.StaircaseDoor" class="form-control" />
+                <span asp-validation-for="Apartment.StaircaseDoor" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-center">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Show/hide new property fields -->
+<script>
+    const checkbox = document.getElementById("createNewProperty");
+    const fields = document.getElementById("newPropertyFields");
+
+    checkbox.addEventListener("change", () => {
+        if (checkbox.checked) fields.classList.remove("d-none");
+        else fields.classList.add("d-none");
+    });
+</script>
+
+<!-- Property Form -->
+<div class="row justify-content-center">
+    <div id="propertyForm" class="col-md-4 d-none">
+        <form method="post" asp-page-handler="Property">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <input asp-for="Property.IdUser" type="hidden" value="@Model.Property.IdUser" />
+
+            <div class="form-group mb-3">
+                <label asp-for="Property.Name" class="form-label"></label>
+                <input asp-for="Property.Name" class="form-control" />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Property.Streetname" class="form-label"></label>
+                <input asp-for="Property.Streetname" class="form-control" />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Property.Streetnumber" class="form-label"></label>
+                <input asp-for="Property.Streetnumber" class="form-control" />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Property.Postcode" class="form-label"></label>
+                <input asp-for="Property.Postcode" class="form-control" />
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Property.PostOfficeName" class="form-label"></label>
+                <input asp-for="Property.PostOfficeName" class="form-control" />
+            </div>
+
+            <div class="form-group text-center mb-0">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Back to list -->
+<div class="text-center mt-3">
+    <a asp-page="Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+    <script>
+        const optHouse = document.getElementById("optHouse");
+        const optApartment = document.getElementById("optApartment");
+        const apartmentForm = document.getElementById("apartmentForm");
+        const propertyForm = document.getElementById("propertyForm");
+        const createNewCheckbox = document.getElementById("createNewProperty");
+        const newPropertyFields = document.getElementById("newPropertyFields");
+        const propertySelect = document.getElementById("Apartment_IdProperty");
+
+
+        createNewCheckbox.addEventListener("change", function () {
+            const selectContainer = propertySelect.closest(".form-group");
+
+            // Show/hide
+            newPropertyFields.classList.toggle("d-none", !this.checked);
+
+            if (selectContainer) {
+                // Show/hide select
+                selectContainer.classList.toggle("d-none", this.checked);
+                propertySelect.disabled = this.checked;
+            }
+
+             });
+
+        // Show Apartment form
+        optApartment.addEventListener("change", () => {
+            apartmentForm.classList.remove("d-none");
+            propertyForm.classList.add("d-none");
+        });
+
+        // Show Property form (Single House)
+        optHouse.addEventListener("change", () => {
+            propertyForm.classList.remove("d-none");
+            apartmentForm.classList.add("d-none");
+        });
+
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

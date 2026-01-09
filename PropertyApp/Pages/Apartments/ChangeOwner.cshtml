@@ -1,0 +1,94 @@
+﻿@page
+@model PropertyApp.Pages.Apartments.ChangeOwnerModel
+
+@{
+    ViewData["Title"] = "ChangeOwner";
+}
+
+<h1>Change Owner</h1>
+
+<div class="mb-3">
+    <div><strong>@(Model.Property?.Name ?? "—")</strong></div>
+    <div class="text-muted">
+        @(Model.Property?.Streetname ?? "")
+        @(Model.Property?.Streetnumber ?? "")
+        @if (!string.IsNullOrWhiteSpace(Model.Apartment?.StaircaseDoor))
+        {
+            <span> @Model.Apartment.StaircaseDoor</span>
+        }
+    </div>
+    <div class="text-muted">
+        @(Model.Property?.Postcode ?? "") @(Model.Property?.PostOfficeName ?? "")
+    </div>
+</div>
+
+@* <h4>ApartmentUser</h4> *@
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        @if (Model.ExistingNextOwner != null)
+        {
+            <h5>Next scheduled owner</h5>
+            <form method="post" asp-page-handler="DeleteNextOwner">
+                <input type="hidden" name="deleteId" value="@Model.ExistingNextOwner.Id" />
+
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input class="form-control-plaintext" value="@Model.ExistingNextOwnerEmail" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">From</label>
+                    <input class="form-control-plaintext" value="@Model.ExistingNextOwner.FromDate.ToString("dd.MM.yyyy")" readonly />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">End</label>
+                    <input class="form-control-plaintext" value="@(Model.ExistingNextOwner.EndDate.HasValue ? Model.ExistingNextOwner.EndDate.Value.ToString("dd.MM.yyyy") : "-")" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <a asp-page="/Apartments/Details" asp-route-id="@Model.Apartment.IdApartment" class="btn btn-secondary ms-2">Cancel</a>
+                </div>
+            </form>
+        }
+        else
+        {
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="ApartmentUser.Id" />
+
+                @* Hidden bind fields for IdApartment, IdUser and UserRole *@
+                <input type="hidden" asp-for="ApartmentUser.IdApartment" />
+                <input type="hidden" asp-for="ApartmentUser.IdUser" />
+                <input type="hidden" asp-for="ApartmentUser.UserRole" />
+
+                <div class="form-group">
+                    <label asp-for="ApartmentUser.FromDate" class="control-label"></label>
+                    <input asp-for="ApartmentUser.FromDate" type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" />
+                    <span asp-validation-for="ApartmentUser.FromDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ApartmentUser.EndDate" class="control-label"></label>
+                    <input asp-for="ApartmentUser.EndDate" type="date" asp-format="{0:yyyy-MM-dd}" class="form-control" />
+                    <span asp-validation-for="ApartmentUser.EndDate" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="NewOwnerEmail" class="control-label">Email of new owner (optional)</label>
+                    <input asp-for="NewOwnerEmail" type="email" class="form-control" placeholder="New owner email. Leave empty if none." />
+                    <span asp-validation-for="NewOwnerEmail" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                    @* Cancel button navigates back to Details for the current apartment *@
+                    <button type="button" class="btn btn-secondary ms-2" onclick="location.href='@Url.Page("/Apartments/Details", new { id = Model.ApartmentUser?.IdApartment ?? Model.Apartment?.IdApartment })'">Cancel</button>
+                </div>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,102 @@
+﻿@page
+@model PropertyApp.Pages.Tenants.TenantModel
+@{
+    ViewData["Title"] = "Tenant";
+}
+
+<h1>Tenant</h1>
+<hr />
+
+<div class="container d-flex flex-column align-items-center text-center">
+
+    <!-- Kuva -->
+    <div class="card mb-3 w-100" style="max-width: 300px;">
+        <div class="ratio ratio-4x3 position-relative overflow-hidden">
+            <img src="https://cdn.pixabay.com/photo/2017/11/10/05/48/user-2935527_1280.png"
+                 class="img-fluid w-100 h-100 object-fit-cover" />
+        </div>
+    </div>
+</div>
+
+<!-- FORM - add tenant -->
+<div id="tenantFormContainer" class="d-flex flex-column align-items-center justify-content-center">
+   
+    <form id="tenantForm" method="post"
+          class="w-100" style="max-width: 300px;"
+          asp-page-handler="@(Model.SavedUser == null ? "" : "Update")">
+
+        <!-- Validation messages -->
+        <div asp-validation-summary="All" class="alert alert-danger mb-3"
+             style="@(ViewData.ModelState.IsValid ? "display:none;" : "display:block;")">
+        </div>
+
+        <!-- Text about password -->
+        <div id="passwordTextContainer" style="display: @(Model.SavedUser == null ? "block" : "none");">
+            <p class="text-center">
+                Pyydä käyttäjää kirjautumaan järjestelmään
+                tällä sähköpostilla <br> ja salasanalla "0000"
+            </p>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3 text-start" id="emailContainer" style="display: @(Model.SavedUser == null ? "block" : "none");">
+            <label asp-for="Email" class="form-label">Tenant Email</label>
+            <input asp-for="Email" class="form-control" required />
+        </div>
+
+        <!-- Rental dates are shown after Save -->
+        <div id="tenantData" style="display: @(Model.SavedUser != null ? "block" : "none");">
+            @if (Model.SavedUser != null && Model.SavedApartmentUser != null)
+            {
+                <hr class="w-100" />
+                <div class="text-center">
+                    <h4>
+                        @((Model.SavedUser.Firstname != "NotSpecified" ? Model.SavedUser.Firstname : "Name"))
+                        @((Model.SavedUser.Lastname != "NotSpecified" ? Model.SavedUser.Lastname : "Lastname"))
+                    </h4>
+                    <p>Email: @Model.SavedUser.Email</p>
+                </div>
+
+                <!-- Uncomment to add the calendar for setting the dates. -->
+             @*    <div class="mb-3 text-start">
+                    <label class="form-label">from date</label>
+                    <input type="date" asp-for=FromDate" class="form-control" />
+                </div>
+                <div class="mb-3 text-start">
+                    <label class="form-label">end date</label>
+                    <input type="date" asp-for="ToDate" class="form-control" />
+                </div> *@
+            }
+        </div>
+
+        <!-- Hide ApartmentId -->
+        <input type="hidden" asp-for="ApartmentId" value="@Model.ApartmentId" />  @* value="5" *@
+
+        <!-- Buttons -->
+        <div class="d-grid gap-2 mt-2">
+            <button type="submit" class="btn btn-primary btn-sm w-50 mx-auto">Save</button>
+            @* <button type="button" class="btn btn-secondary btn-sm w-50 mx-auto" onclick="history.back()">Back</button> *@
+            <a asp-page="/Apartments/Details" asp-route-id="@Model.ApartmentId" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Apartment/Details
+            </a>
+        </div>
+   </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // After submitting, if the data is saved, hide the Email and password text, show tenantData
+        document.addEventListener("DOMContentLoaded", function () {
+            var savedUserExists = '@(Model.SavedUser != null ? "true" : "false")';
+            if (savedUserExists === "true") {
+                document.getElementById("emailContainer").style.display = "none";
+                document.getElementById("passwordTextContainer").style.display = "none";
+                document.getElementById("tenantData").style.display = "block";
+            }
+        });
+    </script>
+}
+
+

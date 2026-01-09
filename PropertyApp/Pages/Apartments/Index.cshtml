@@ -1,0 +1,114 @@
+﻿@page
+@model PropertyApp.Pages.Apartments.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Cardview of Apartments</h1>
+
+@* <div class="mb-3">
+    <strong>Current user:</strong>
+    @Model.CurrentUserId — @(Model.CurrentUserEmail ?? "—")
+</div> *@
+
+@* <p>
+    <a asp-page="Create" class="btn btn-primary">Create New</a>
+</p> *@
+
+
+<div class="row">
+@foreach (var item in Model.Apartments) {
+    <div class="col-sm-6 col-md-4 mb-4">
+            <div class="card h-100 position-relative">
+            <div class="card-body">
+                <h5 class="card-title">
+                    @(item.IdPropertyNavigation?.Name ?? "—")
+                </h5>
+
+                <h6 class="card-subtitle mb-2 text-muted">
+                    @(string.IsNullOrWhiteSpace(item.StaircaseDoor) ? "Single House" : "Multi Apartment")
+                </h6>
+
+                <p class="card-text mb-1">
+                    @if (item.IdPropertyNavigation != null)
+                    {
+                        @item.IdPropertyNavigation.Streetname
+                        <span class="ms-2">@item.IdPropertyNavigation.Streetnumber</span>
+                        @if (!string.IsNullOrWhiteSpace(item.StaircaseDoor))
+                        {
+                            <span class="ms-2 text-muted">@item.StaircaseDoor</span>
+                        }
+                    }
+                    else
+                    {
+                        @:<span>—</span>
+                    }
+                </p>
+
+                @* Add a stretched link so the whole card is clickable and goes to Details *@
+                <a asp-page="./Details" asp-route-id="@item.IdApartment" class="stretched-link" aria-label="Open details for apartment @item.IdApartment"></a>
+
+                <p class="card-text text-muted small mb-0">
+                    @if (item.IdPropertyNavigation != null)
+                    {
+                        @item.IdPropertyNavigation.Postcode
+                        <span class="ms-2 text-muted">@item.IdPropertyNavigation.PostOfficeName</span>
+
+                        @* 
+                        <br />
+                        <span class="text-muted small">Role: @((Model.ApartmentUserRoles.TryGetValue(item.IdApartment, out var role) && !string.IsNullOrWhiteSpace(role)) ? role : "—")</span> *@
+                    }
+                    else
+                    {
+                        @:<span>—</span>
+                    }
+                </p>
+            </div>
+
+            <div class="card-footer bg-transparent border-top-0">
+                @* show user role under PostOfficeName *@
+                @* <div class="text-muted small">
+                    @((Model.ApartmentUserRoles.TryGetValue(item.IdApartment, out var footerRole) && !string.IsNullOrWhiteSpace(footerRole)) ? $"Role: {footerRole}" : "Role: —")
+                </div> *@
+					
+                @* These buttons below are not needed in the final app, but are left here to be used when developing functionality 
+                <div class="mt-2">
+                    
+                    <a asp-page="/MeasureDevices/Index" asp-route-idApartment="@item.IdApartment" class="btn btn-sm btn-outline-primary me-2">Devices</a>
+                    <a asp-page="./Edit" asp-route-id="@item.IdApartment" class="btn btn-sm btn-outline-primary me-2">Edit</a>
+                    <a asp-page="./Delete" asp-route-id="@item.IdApartment" class="btn btn-sm btn-outline-danger">Delete</a>
+                </div> *@
+            </div>
+        </div>
+    </div>
+}
+    @* Card for adding new Apartment *@
+    <div class="col-sm-6 col-md-4 mb-4">
+        <a asp-page="/Apartments/NewApartmentOrProperty"
+           class="card h-100 text-decoration-none text-muted d-flex align-items-center justify-content-center">
+
+            <div class="card-body text-center">
+                <div class="display-4">+</div>
+                <h5 class="mt-2">Add new apartment</h5>
+            </div>
+        </a>
+    </div>
+</div>
+@* Planned addiotional card for Creating new Apartment is not so good option if user has many apartments, so a separate button is added below the cards. *@
+<div>
+    <a asp-page="./NewApartmentOrProperty" class="btn btn-sm btn-outline-primary me-2">Create NewApartmentOrProperty</a>
+</div>
+
+
+
+
+@* <a asp-page="/MeasureDevices/Index" asp-route-idApartment="2">Testaa mittareita (asunto 2, Tupu)</a> @* lisätty testausta varten linkki *@
+
+@* <a asp-page="/MeasureDevices/Index" asp-route-idApartment="@apartment.IdApartment">
+    Avaa mittarit
+</a> --tarkista vielä tämä, sitten kun Apartment-sivu on valmis*@
+<br>
+<br>
+@* kommentti *@
+@* kommentti nyt kun default branch mihin merget menee pitäisi olla Development *@

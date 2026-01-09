@@ -1,0 +1,46 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Property App";
+    Layout = null; // No top bar on landing
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" /> <!-- Loads site.css for green theme/card/buttons -->
+</head>
+<body>
+    <div class="landing-container">
+        <h1>SmartUs</h1>
+        
+        <p class="subtitle">Manage property water and electricity consumption easily.<br/>
+        Owners manage data, tenants view their usage securely.</p>
+        <!-- Inline Login Form -->
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Input.Email">Email address</label>
+                <input asp-for="Input.Email" class="form-control" placeholder="Email address" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Password">Password</label>
+                <input asp-for="Input.Password" type="password" class="form-control" placeholder="Your password" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+            <button type="submit" asp-page-handler="Login" class="btn btn-login">Login</button>
+        </form>
+        <a asp-page="/Users/Create" class="btn btn-register">Register</a>
+        <div class="footer">
+            © 2025 SmartUs - Smart monitoring for smart usage of home utilities
+        </div>
+    </div>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>
+@* kommentti *@

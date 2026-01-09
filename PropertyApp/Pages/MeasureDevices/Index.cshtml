@@ -1,0 +1,197 @@
+﻿@page
+@model PropertyApp.Pages.MeasureDevices.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<br>
+
+@*---------- Mittareiden kuvakkeet määräytyvät mittarin nimen perusteella:------------ *@
+
+@functions {
+    string GetIcon(string type)
+    {
+        return type switch
+        {
+            "water-hot" => "bi-thermometer-sun",
+            "water-cold" => "bi-thermometer-snow",
+            "electricity" => "bi-lightning-charge",
+            "heating" => "bi-fire",
+            _ => ""
+        };
+    }
+}
+
+@*---------Mittarin nimi kirjoitetaan isolla kirjaimella-------------*@
+
+@functions {
+    string FormatDeviceName(string raw)
+    {
+        return string.Join(" ",
+            raw.Split('-', '_')
+               .Select(s => char.ToUpper(s[0]) + s.Substring(1)));
+    }
+}
+
+
+@* ------------Kuva + kiinteistö nimi ja asunnon osoitetiedot vierekkäin----------------  *@
+
+<div class="row align-items-center mb-4">
+
+    @*--------------Vasen sarake: Kuva------------------------- *@
+    <div class="col-12 col-md-4">
+        <div class="card w-100" style="max-width: 250px; margin-left:auto; margin-right:auto;">
+            <div class="ratio ratio-4x3">
+                <img src="https://cdn.pixabay.com/photo/2013/07/12/17/55/home-152619_1280.png"
+                     class="img-fluid object-fit-cover" />
+            </div>
+        </div>
+    </div>
+
+    @* ------------------- Oikea sarake: Kiinteistö + osoite---------*@
+    <div class="col-12 col-md-8">
+
+        <h1 class="fw-bold">@Model.Property?.Name</h1>
+
+        <h4 class="text-muted">
+            @Model.Apartment?.IdPropertyNavigation?.Streetname
+            @Model.Apartment?.IdPropertyNavigation?.Streetnumber
+
+            @if (!string.IsNullOrWhiteSpace(Model.Apartment?.StaircaseDoor))
+            {
+                <span>@Model.Apartment.StaircaseDoor</span>
+            }
+
+            <br />
+
+            @Model.Apartment?.IdPropertyNavigation?.Postcode
+            @Model.Apartment?.IdPropertyNavigation?.PostOfficeName
+        </h4>
+
+        <!-------------Asukkaan tiedot, rooli ja asukkaan tietojen muokkaus:--------------->
+        @* Oikeastaan tässä pitäisi ehkä vain olla mahdollisuus muokata tenant roolin päättymispäivää
+           ja sitten jossain muualla tenant rooliin laitetaan joku uusi vuokralainen *@
+        @if (Model.ApartmentUser != null)
+        {
+
+        <h5 class="text-secondary">
+            Resident: @Model.ApartmentUser.IdUserNavigation.Firstname 
+            @Model.ApartmentUser.IdUserNavigation.Lastname
+                <a asp-page="/Users/Edit"
+                   asp-route-id="@Model.ApartmentUser.IdUser"
+                   asp-route-idApartment="@Model.Apartment.IdApartment" @* käytetään cancel-nappia varten *@
+                   class="text-primary me-3">
+                    <i class="bi bi-pencil-square" title="Edit"></i>
+                </a>
+            <div>
+                Role: @Model.ApartmentUser.UserRole
+            </div>
+        </h5>
+        }
+        else
+        {
+            <h5 class="text-secondary">Resident: —</h5>
+        }
+    </div>
+</div>
+
+<br>
+<br>
+
+
+@* -----------------Mittarin kuvakkeet ja kortit:------------------------------- *@
+@* asp-page= /Measures/Index on sivu jolle mennään *@
+
+
+<style>
+    .device-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+        border-radius: 12px;
+        background-color: #ffffff;
+    }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            background-color: #e9fce8;  /* Hover-väri */
+        }
+
+        .device-card i {
+            transition: transform 0.25s ease, color 0.25s ease;
+            color: #333;
+        }
+
+        .device-card:hover i {
+            transform: scale(1.1);
+            color: forestgreen; 
+        }
+
+        .device-card h5 {
+            transition: color 0.25s ease;
+            color: #333;
+        }
+
+        .device-card:hover h5 {
+            color: forestgreen;
+        }
+</style>
+
+
+@* Toinen vaihtoehto, ei värejä, mutta hover-efekti: *@
+@* <style>
+    .device-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 12px;
+    }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+        }
+
+        .device-card i {
+            transition: transform 0.2s ease;
+        }
+
+        .device-card:hover i {
+            transform: scale(1.1);
+        }
+</style> *@
+
+<div class="row">
+
+    @foreach (var device in Model.MeasureDevice)
+    {
+        <div class="col-6 col-md-3 text-center mb-4">
+			<a asp-page="/Measures/Index" asp-route-idMeasureDevice="@device.IdMeasureDevice" 
+			   class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-lg device-card">
+                    <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                        <i class="bi @GetIcon(device.DeviceType)" style="font-size: 55px;"></i>
+                        <h5 class="mt-2">@FormatDeviceName(device.DeviceType)</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+
+</div>
+<br>
+<br />
+
+@*-------------- Back-nappi takaisin Apartments-sivulle:-----------------*@
+@* <a asp-page="/Apartments/Details" asp-route-id="@Model.IdApartment" class="btn btn-secondary"> *@
+<a asp-page="/Apartments/Index" class="btn btn-secondary">
+    <i class="bi bi-arrow-left"></i> Back
+</a>
+
+
+
+
+@* Pelkät mittarikuvakkeet ilman korttia: *@
+@* <div class="mb-2">
+    <i class="bi @GetIcon(device.DeviceType)" style="font-size: 55px;"></i>
+</div>
+    <div>@FormatDeviceName(device.DeviceType)</div>
+    <div>@device.DeviceType</div> *@

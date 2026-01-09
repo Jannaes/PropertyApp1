@@ -1,0 +1,339 @@
+﻿@page "{id:int}"
+@model PropertyApp.Pages.Apartments.DetailsModel
+
+@{
+    ViewData["Title"] = "Apartment";
+}
+
+<br>
+
+@*---------- Mittareiden kuvakkeet määräytyvät mittarin nimen perusteella:------------ *@
+
+@functions {
+    string GetIcon(string type)
+    {
+        return type switch
+        {
+            "water-hot" => "bi-thermometer-sun",
+            "water-cold" => "bi-thermometer-snow",
+            "electricity" => "bi-lightning-charge",
+            "heating" => "bi-fire",
+            _ => ""
+        };
+    }
+}
+
+@*---------Mittarin nimi kirjoitetaan isolla kirjaimella-------------*@
+
+@functions {
+    string FormatDeviceName(string raw)
+    {
+        return string.Join(" ",
+            raw.Split('-', '_')
+               .Select(s => char.ToUpper(s[0]) + s.Substring(1)));
+    }
+}
+
+
+
+@* ------------Kuva + kiinteistö nimi ja asunnon osoitetiedot vierekkäin----------------  *@
+
+<div class="row align-items-center mb-4">
+
+    @*--------------Vasen sarake: Kuva------------------------- *@
+    <div class="col-12 col-md-4">
+        <div class="card w-100" style="max-width: 250px; margin-left:auto; margin-right:auto;">
+            @if (!string.IsNullOrWhiteSpace(Model.Apartment?.StaircaseDoor))
+            {
+                <div class="ratio ratio-4x3">
+                    <img src="@(Url.Content("~/Apartment_image.png"))"
+                         class="img-fluid w-100 h-100" />
+                    
+            </div>
+            }
+            else
+            {
+                <div class="ratio ratio-4x3">
+                    <img src="@(Url.Content("~/Property_image.png"))"
+                         class="img-fluid w-100 h-100" />
+                </div>
+            }
+        </div>
+    </div>
+
+    @* ------------------- Oikea sarake: Kiinteistö + osoite---------*@
+    <div class="col-12 col-md-8">
+
+        <h1 class="fw-bold">@(Model.Apartment.IdPropertyNavigation?.Name ?? "—")</h1>
+
+        <h4 class="text-muted">
+            @Model.Apartment?.IdPropertyNavigation?.Streetname
+            @Model.Apartment?.IdPropertyNavigation?.Streetnumber
+
+            @if (!string.IsNullOrWhiteSpace(Model.Apartment?.StaircaseDoor))
+            {
+                <span>@Model.Apartment.StaircaseDoor</span>
+            }
+
+            <br />
+
+            @Model.Apartment?.IdPropertyNavigation?.Postcode
+            @Model.Apartment?.IdPropertyNavigation?.PostOfficeName
+        </h4>
+
+        <!-------------Asunnon omistaja:--------------->
+        @if (Model.OwnerCurrent != null)
+        {
+            <h5 class="text-secondary">
+                Owner: @Model.OwnerCurrent.Firstname
+                @Model.OwnerCurrent.Lastname
+                @if (Model.UserRole == "owner")
+                {
+                    <span>From: @Model.OwnershipFromDate - To: @Model.OwnershipEndDate</span>
+                    <a asp-page="/Apartments/ChangeOwner"
+                       asp-route-id="@Model.Apartment.IdApartment"
+                       class="text-primary me-3">
+                        <i class="bi bi-pencil-square" title="Edit"></i>
+                    </a>
+                }
+            </h5>
+        }
+        else
+        {
+            <h5 class="text-secondary">Owner: —</h5>
+        }
+
+        <!-------------Asunnon vuokralainen:--------------->
+        @if (Model.TenantCurrent != null)
+        {
+            <h5 class="text-secondary">
+                Tenant: @Model.TenantCurrent.Firstname
+                @Model.TenantCurrent.Lastname
+                From: @Model.ContractFromDate - To: @Model.ContractEndDate
+                <a asp-page="/Apartments/TerminateRenting"
+                   asp-route-id="@Model.Apartment.IdApartment"
+                   class="text-primary me-3">
+                    <i class="bi bi-pencil-square" title="Edit"></i>
+                </a>
+            </h5>
+        }
+        else
+        {
+            <!-------------Add tenant button--->
+            <h5 class="text-secondary">
+                Tenant: <a asp-page="/Tenants/Tenant.Index"
+                           asp-route-apartmentId="@Model.Apartment.IdApartment"
+                           class="text-primary ms-2">
+                    <i class="bi bi-pencil-square" title="Add tenant"></i>
+                </a>
+            </h5>
+        }
+       
+        <!-------------Future tenant--------------->
+        @if (Model.ContractEndDate != "-" && Model.TenantCurrent != null)
+            {
+            <h5 class="text-secondary">
+            Future tenant: 
+                <a asp-page="/FutureTenants/FutureTenant.Index"
+                 asp-route-apartmentId="@Model.Apartment.IdApartment"
+                 class="text-primary ms-2">
+                    <i class="bi bi-pencil-square" title="Add future tenant"></i>
+                </a>
+            </h5>
+            }
+        
+
+        <!-------------Käyttäjän rooli:--------------->
+        @* @if (Model.UserRole != null)
+        {
+            <h5 class="text-secondary">
+                UserRole: @Model.UserRole
+            </h5>
+        }
+        else
+        {
+            <h5 class="text-secondary">Tenant: —</h5>
+        } *@
+@* 
+       
+            <h5 class="text-secondary">UserRole: No active role</h5>
+        } *@
+
+        
+        
+
+        <!-------------Asukkaan tiedot, rooli ja asukkaan tietojen muokkaus:--------------->
+        @* @if (Model.ApartmentUser != null)
+        {
+
+            <h5 class="text-secondary">
+                Resident: @Model.ApartmentUser.IdUserNavigation.Firstname
+                @Model.ApartmentUser.IdUserNavigation.Lastname
+                <a asp-page="/Users/Edit"
+                   asp-route-id="@Model.ApartmentUser.IdUser"
+                   asp-route-idApartment="@Model.Apartment.IdApartment" <! käytetään cancel-nappia varten -->
+                   class="text-primary me-3">
+                    <i class="bi bi-pencil-square" title="Edit"></i>
+                </a>
+                <div>
+                    Role: @Model.ApartmentUser.UserRole
+                </div>
+            </h5>
+        }
+        else
+        {
+            <h5 class="text-secondary">Resident: —</h5>
+        } *@
+    </div>
+</div>
+
+<br>
+<br>
+
+
+@* -----------------Mittarin kuvakkeet ja kortit:------------------------------- *@
+@* asp-page= /Measures/Index on sivu jolle mennään *@
+
+
+<style>
+    .device-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+        border-radius: 12px;
+        background-color: #ffffff;
+    }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            background-color: #e9fce8; /* Hover-väri */
+        }
+
+        .device-card i {
+            transition: transform 0.25s ease, color 0.25s ease;
+            color: #333;
+        }
+
+        .device-card:hover i {
+            transform: scale(1.1);
+            color: forestgreen;
+        }
+
+        .device-card h5 {
+            transition: color 0.25s ease;
+            color: #333;
+        }
+
+        .device-card:hover h5 {
+            color: forestgreen;
+        }
+</style>
+
+
+@* Toinen vaihtoehto, ei värejä, mutta hover-efekti: *@
+@* <style>
+    .device-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 12px;
+    }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+        }
+
+        .device-card i {
+            transition: transform 0.2s ease;
+        }
+
+        .device-card:hover i {
+            transform: scale(1.1);
+        }
+</style> *@
+
+<div class="row">
+
+    @foreach (var device in Model.MeasureDevices)
+    {
+        <div class="col-6 col-md-3 text-center mb-4">
+            <a asp-page="/Measures/Index" asp-route-idMeasureDevice="@device.IdMeasureDevice"
+               class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-lg device-card">
+                    <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                        <i class="bi @GetIcon(device.DeviceType)" style="font-size: 55px;"></i>
+                        <h5 class="mt-2">@FormatDeviceName(device.DeviceType)</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+
+</div>
+<br>
+<br />
+
+@*-------------- Back-nappi takaisin Apartments-sivulle:-----------------*@
+<a asp-page="./Index" class="btn btn-secondary">
+    <i class="bi bi-arrow-left"></i> Back
+</a>
+
+
+@* Pelkät mittarikuvakkeet ilman korttia: *@
+@* <div class="mb-2">
+    <i class="bi @GetIcon(device.DeviceType)" style="font-size: 55px;"></i>
+</div>
+    <div>@FormatDeviceName(device.DeviceType)</div>
+    <div>@device.DeviceType</div> *@
+
+@* Vanha koodi ======================================================================================== *@
+@* <h1>Apartment</h1>
+
+<div>
+    <h4>Apartment</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Apartment.IdPropertyNavigation.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @(Model.Apartment.IdPropertyNavigation?.Name ?? "—")
+        </dd>
+
+        <dt class="col-sm-2">
+            Address
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                var prop = Model.Apartment.IdPropertyNavigation;
+                var addressParts = new List<string>();
+                if (!string.IsNullOrWhiteSpace(prop?.Streetname)) addressParts.Add(prop.Streetname);
+                if (!string.IsNullOrWhiteSpace(prop?.Streetnumber)) addressParts.Add(prop.Streetnumber);
+                var address = string.Join(" ", addressParts);
+                if (!string.IsNullOrWhiteSpace(Model.Apartment.StaircaseDoor))
+                {
+                    address = string.IsNullOrWhiteSpace(address)
+                        ? Model.Apartment.StaircaseDoor
+                        : $"{address} {Model.Apartment.StaircaseDoor}";
+                }
+            }
+            @(string.IsNullOrWhiteSpace(address) ? "—" : address)
+        </dd>
+        
+        <dt class="col-sm-2">
+            PostOffice
+        </dt>
+        <dd class="col-sm-10">
+            @{
+                var prop2 = Model.Apartment.IdPropertyNavigation;
+                var postParts = new List<string>();
+                if (!string.IsNullOrWhiteSpace(prop2?.Postcode)) postParts.Add(prop2.Postcode);
+                if (!string.IsNullOrWhiteSpace(prop2?.PostOfficeName)) postParts.Add(prop2.PostOfficeName);
+                var postLine = string.Join(" ", postParts);
+            }
+            @(string.IsNullOrWhiteSpace(postLine) ? "—" : postLine)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Apartment.IdApartment">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div> *@

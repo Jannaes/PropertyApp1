@@ -1,0 +1,40 @@
+@page
+@model PropertyApp.Pages.Users.IndexModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<h1>Users</h1>
+
+<p>
+    <a class="btn btn-primary" asp-page="Create">Create New</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Users)
+    {
+        <tr>
+            <td>@item.Firstname</td>
+            <td>@item.Lastname</td>
+            <td>@item.Email</td>
+            <td>@item.Phone</td>
+            <td>
+                <a class="btn btn-sm btn-info" asp-page="Details" asp-route-id="@item.IdUser">Details</a>
+                <a class="btn btn-sm btn-secondary" asp-page="Edit" asp-route-id="@item.IdUser">Edit</a>
+                <a class="btn btn-sm btn-danger" asp-page="Delete" asp-route-id="@item.IdUser">Delete</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

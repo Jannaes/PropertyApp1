@@ -1,0 +1,119 @@
+﻿@page
+@model PropertyApp.Pages.Users.LoginModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<style>
+    /* Scoped login page styles - do not touch global body */
+    .login-page {
+        background: #E8F5E9; /* Mint-green */
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+    }
+
+    .login-container {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .login-container h1 {
+        font-size: 2.2rem;
+        color: #1B5E20;
+        margin-bottom: 10px;
+    }
+
+    .login-container p.subtitle {
+        color: #666;
+        margin-bottom: 40px;
+        font-size: 1rem;
+    }
+
+    .btn {
+        display: inline-block;
+        width: 100%;
+        padding: 16px;
+        margin: 10px 0;
+        font-size: 1.1rem;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login {
+        background: #000;
+        color: white;
+        border: 3px solid #00E5FF; /* Cyan border */
+    }
+
+    .btn-login:hover {
+        background: #00E5FF;
+        color: #000;
+        transform: translateY(-3px);
+    }
+
+    .btn-register {
+        background: transparent;
+        color: #000;
+        border: 2px solid #000;
+    }
+
+    .btn-register:hover {
+        background: #000;
+        color: white;
+    }
+
+    .footer {
+        margin-top: 50px;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* small responsive tweak */
+    @@media (max-width: 480px) {
+        .login-container { padding: 24px; }
+    }
+</style>
+
+<div class="login-page">
+    <div class="login-container">
+        <h1>Kiinteistösovellus</h1>
+        <p class="subtitle">Hallinnoi kiinteistöjen vesikulutusta ja sähköä helposti</p>
+
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <input asp-for="Input.Email" class="form-control" placeholder="Sähköposti" style="padding:15px; border-radius:50px; border:1px solid #ccc; margin-bottom:15px;" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="Input.Password" class="form-control" placeholder="Salasana" style="padding:15px; border-radius:50px; border:1px solid #ccc; margin-bottom:20px;" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-login">Login</button>
+        </form>
+
+        <a asp-page="/Users/Create" class="btn btn-register">Register</a>
+
+        <div class="footer">
+            Kiinteistösovellus 2025
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

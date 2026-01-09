@@ -1,0 +1,84 @@
+@page
+@model PropertyApp.Pages.Users.CreateModel
+@{
+    ViewData["Title"] = "Create User";
+    Layout = null; // No top bar on register (like landing)
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/site.css" /> <!-- Loads site.css for green theme/card/buttons -->
+</head>
+<body>
+    <div class="register-container">
+        <h1>Create User</h1>
+        <p class="subtitle">Create a new account</p>
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="User.Firstname">First Name</label>
+                    <input asp-for="User.Firstname" class="form-control" />
+                    <span asp-validation-for="User.Firstname" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Lastname">Last Name</label>
+                    <input asp-for="User.Lastname" class="form-control" />
+                    <span asp-validation-for="User.Lastname" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="User.Email">Email</label>
+                    <input asp-for="User.Email" class="form-control" />
+                    <span asp-validation-for="User.Email" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="User.Streetname">Street Name</label>
+                    <input asp-for="User.Streetname" class="form-control" />
+                    <span asp-validation-for="User.Streetname" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Streetnumber">Street Number</label>
+                    <input asp-for="User.Streetnumber" class="form-control" />
+                    <span asp-validation-for="User.Streetnumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Apartment">Apartment</label>
+                    <input asp-for="User.Apartment" class="form-control" />
+                    <span asp-validation-for="User.Apartment" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Postcode">Postcode</label>
+                    <input asp-for="User.Postcode" class="form-control" />
+                    <span asp-validation-for="User.Postcode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.PostOfficeName">Post Office Name</label>
+                <input asp-for="User.PostOfficeName" class="form-control" />
+                <span asp-validation-for="User.PostOfficeName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="User.Password">Password</label>
+                <input asp-for="User.Password" type="password" class="form-control" />
+                <span asp-validation-for="User.Password" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a asp-page="/Index" class="btn btn-secondary">Cancel</a>
+        </form>
+        <div class="footer">
+            © 2025 Property App
+        </div>
+    </div>
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

@@ -1,0 +1,44 @@
+@page "{id:int}"
+@model PropertyApp.Pages.Users.DetailsModel
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<h1>User Details</h1>
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Firstname</dt>
+        <dd class="col-sm-10">@Model.User?.Firstname</dd>
+
+        <dt class="col-sm-2">Lastname</dt>
+        <dd class="col-sm-10">@Model.User?.Lastname</dd>
+
+        <dt class="col-sm-2">Street</dt>
+        <dd class="col-sm-10">@($"{Model.User?.Streetname} {Model.User?.Streetnumber}")</dd>
+
+        <dt class="col-sm-2">Apartment</dt>
+        <dd class="col-sm-10">@Model.User?.Apartment</dd>
+
+        <dt class="col-sm-2">Postcode</dt>
+        <dd class="col-sm-10">@Model.User?.Postcode</dd>
+
+        <dt class="col-sm-2">Post Office</dt>
+        <dd class="col-sm-10">@Model.User?.PostOfficeName</dd>
+
+        <dt class="col-sm-2">Phone</dt>
+        <dd class="col-sm-10">@Model.User?.Phone</dd>
+
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.User?.Email</dd>
+
+        <dt class="col-sm-2">Password</dt>
+        <dd class="col-sm-10">@Model.User?.Password</dd>
+    </dl>
+</div>
+
+<p>
+    <a class="btn btn-secondary" asp-page="Index">Back to list</a>
+    <a class="btn btn-primary" asp-page="Edit" asp-route-id="@Model.User?.IdUser">Edit</a>
+</p>

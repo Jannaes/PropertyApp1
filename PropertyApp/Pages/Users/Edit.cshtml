@@ -1,0 +1,210 @@
+@page "{id:int}"
+@model PropertyApp.Pages.Users.EditModel
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<style>
+    .register-page {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+    }
+
+    .register-container {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        width: 90%;
+        max-width: 500px;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    p.subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 1rem;
+    }
+
+    .form-row {
+        display: flex;
+        gap: 10px;
+    }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+    .btn {
+        display: inline-block;
+        width: 100%;
+        padding: 16px;
+        margin: 10px 0;
+        font-size: 1.1rem;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        border: 3px solid #00E5FF;
+        background: #000;
+        color: white;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+        .btn:hover {
+            background: #00E5FF;
+            color: #000;
+        }
+
+    .btn-secondary {
+        background: transparent;
+        color: #000;
+        border: 2px solid #000;
+    }
+
+        .btn-secondary:hover {
+            background: #000;
+            color: white;
+        }
+
+    .text-danger {
+        color: red;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .footer {
+        margin-top: 50px;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="register-page">
+    <div class="register-container">
+        <h1>Edit</h1>
+        <p class="subtitle">Edit your account</p>
+
+        <form method="post">
+			@Html.AntiForgeryToken()
+            <input type="hidden" asp-for="User.IdUser" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="User.Firstname">First Name</label>
+                <input asp-for="User.Firstname" class="form-control" />
+                <span asp-validation-for="User.Firstname" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="User.Lastname">Last Name</label>
+                <input asp-for="User.Lastname" class="form-control" />
+                <span asp-validation-for="User.Lastname" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="User.Email">Email</label>
+                    <input asp-for="User.Email" class="form-control" />
+                    <span asp-validation-for="User.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Phone">Phone Number</label>
+                    <input asp-for="User.Phone" class="form-control" />
+                    <span asp-validation-for="User.Phone" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="User.Streetname">Street Name</label>
+                    <input asp-for="User.Streetname" class="form-control" />
+                    <span asp-validation-for="User.Streetname" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Streetnumber">Street Number</label>
+                    <input asp-for="User.Streetnumber" class="form-control" />
+                    <span asp-validation-for="User.Streetnumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Apartment">Apartment</label>
+                    <input asp-for="User.Apartment" class="form-control" />
+                    <span asp-validation-for="User.Apartment" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="User.Postcode">Postcode</label>
+                    <input asp-for="User.Postcode" class="form-control" />
+                    <span asp-validation-for="User.Postcode" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="User.PostOfficeName">Post Office Name</label>
+                <input asp-for="User.PostOfficeName" class="form-control" />
+                <span asp-validation-for="User.PostOfficeName" class="text-danger"></span>
+            </div>
+
+            @if (Model.IsInvitedUser)
+            {
+                <div class="form-group">
+                    <label asp-for="User.Password">Set password (required for invited users)</label>
+                    <input asp-for="User.Password" type="password" class="form-control" />
+                    <span asp-validation-for="User.Password" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label asp-for="User.Password">New Password (leave blank to keep current)</label>
+                    <input asp-for="User.Password" type="password" class="form-control" />
+                    <small class="form-text text-muted">Leave empty to keep the existing password.</small>
+                    <span asp-validation-for="User.Password" class="text-danger"></span>
+                </div>
+            }
+
+            <button type="submit" class="btn">Save</button>
+            <a asp-page="/Apartments/Index" class="btn btn-secondary">Cancel</a>
+        </form>
+
+        <div class="footer">
+            © 2025 Property App
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

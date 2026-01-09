@@ -1,0 +1,75 @@
+﻿@page
+@model PropertyApp.Pages.Measures.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Measure</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Measure.MeasureId" />
+            <div class="form-group">
+                
+                <label asp-for="Measure.IdMeasureDevice" class="control-label"></label>
+				@*                 <select asp-for="Measure.IdMeasureDevice" class="form-control" asp-items="ViewBag.IdMeasureDevice"></select> *@
+                <input type="hidden" asp-for="Measure.IdMeasureDevice" />  @* käyttäjä ei voi valita mittaria (select), vaan se tulee automaattisesti *@
+                <span asp-validation-for="Measure.IdMeasureDevice" class="text-danger"></span>
+                <p>Measure Device: @Model.Measure.IdMeasureDevice</p>
+            </div>
+            <div class="form-group">
+                
+                <label asp-for="Measure.IdUser" class="control-label"></label>
+@*                 <select asp-for="Measure.IdUser" class="form-control" asp-items="ViewBag.IdUser"></select> *@
+                <span asp-validation-for="Measure.IdUser" class="text-danger"></span>
+                <input type="hidden" asp-for="Measure.IdUser" />  @* käyttäjä ei voi valita  (select), vaan se tulee automaattisesti *@
+                <p>User: @Model.Measure.IdUser</p>
+            </div>
+            <div class="form-group">
+                
+                <label asp-for="Measure.Amount" class="control-label"></label>
+                @* <input asp-for="Measure.Amount" class="form-control" /> *@
+                <input asp-for="Measure.Amount" type="text" inputmode="decimal" class="form-control" />
+
+				@* <input asp-for="Measure.Amount" type="text" step="0.01" class="form-control" />  @* lisätty, koska number-kenttä ei ymmärrä desimaalipistettä, vaan odottaa desimaalipilkkua*@
+                <span asp-validation-for="Measure.Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                
+                <label asp-for="Measure.Date" class="control-label"></label>
+@*                 <input asp-for="Measure.Date" class="form-control" /> *@
+                <input asp-for="Measure.Date" type="date" class="form-control" />
+                <span asp-validation-for="Measure.Date" class="text-danger"></span>
+            </div>
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-success" /> |
+
+            @* ------------Back-nappi takaisin Measures-sivulle:------------------*@
+            <a asp-page="./Index" asp-route-IdMeasureDevice="@Model.Measure.IdMeasureDevice" class="btn btn-secondary">
+                <i class="bi bi-arrow"></i> Cancel
+            </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>      @* lisätty, jotta jQuery validation ymmärtää suomalaista desimaalipilkkuformaattia, ei herjaa enää: The field Amount must be a number. *@
+															
+        // Asetetaan jQuery validation käyttämään suomalaista pilkkua
+        $.validator.methods.number = function (value, element) {
+            return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(value);
+        };
+    </script>
+}

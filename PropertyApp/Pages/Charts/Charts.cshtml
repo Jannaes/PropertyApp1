@@ -1,0 +1,148 @@
+﻿@page "{id:int}"
+@model PropertyApp.Pages.Charts.ChartsModel
+
+@{
+    ViewData["Title"] = "Charts";
+}
+
+@*---------- Mittareiden kuvakkeet määräytyvät mittarin nimen perusteella:------------ *@
+
+@functions {
+    string GetIcon(string type)
+    {
+        return type switch
+        {
+            "water-hot" => "bi-thermometer-sun",
+            "water-cold" => "bi-thermometer-snow",
+            "electricity" => "bi-lightning-charge",
+            "heating" => "bi-fire",
+            _ => ""
+        };
+    }
+}
+
+@*---------Mittarin nimi kirjoitetaan isolla kirjaimella-------------*@
+
+@functions {
+    string FormatDeviceName(string raw)
+    {
+        return string.Join(" ",
+            raw.Split('-', '_')
+               .Select(s => char.ToUpper(s[0]) + s.Substring(1)));
+    }
+}
+
+<div class="d-flex align-items-center mb-3">
+    <i class="bi @GetIcon(@Model.DeviceType) me-3" style="font-size: 55px;"></i>
+    <h5 class="mb-0">@FormatDeviceName(@Model.DeviceType)</h5>
+</div>
+
+<h2>
+    Consumption Chart
+    <small class="text-muted"> — User: @Model.CurrentUserId, Device: @Model.IdMeasureDeviceOfInterest</small>
+</h2>
+
+<div class="mb-3">
+    <label class="me-3">Period:</label>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="period" id="period-daily" value="daily" checked>
+        <label class="form-check-label" for="period-daily">Daily</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="period" id="period-monthly" value="monthly">
+        <label class="form-check-label" for="period-monthly">Monthly</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="period" id="period-yearly" value="yearly">
+        <label class="form-check-label" for="period-yearly">Yearly</label>
+    </div>
+</div>
+
+<canvas id="consumptionChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let chartInstance = null;
+// expose the server-provided device id to JS
+const deviceId = @Model.IdMeasureDeviceOfInterest;
+// server-generated handler URL to avoid routing mistakes
+const chartDataHandlerUrl = '@Url.Page("/Charts/Charts", "ChartData", new { id = Model.IdMeasureDeviceOfInterest })';
+
+function getSelectedPeriod() {
+    const el = document.querySelector('input[name="period"]:checked');
+    return el ? el.value : 'daily';
+}
+
+function loadChart(period) {
+    // include device id so the handler returns data for the selected device
+    const url = `${chartDataHandlerUrl}&period=${encodeURIComponent(period)}`;
+    fetch(url)
+      .then(r => {
+        if (!r.ok) throw new Error('Network response was not ok');
+        return r.json();
+      })
+      .then(data => {
+        // Format labels based on selected period
+        let labels;
+        if (period === 'monthly') {
+            labels = data.map(d => {
+                const dt = new Date(d.date);
+                const y = dt.getFullYear();
+                const m = String(dt.getMonth() + 1).padStart(2, '0');
+                return `${y}-${m}`;
+            });
+        } else if (period === 'yearly') {
+            labels = data.map(d => {
+                const dt = new Date(d.date);
+                return String(dt.getFullYear());
+            });
+        } else {
+            labels = data.map(d => new Date(d.date).toLocaleDateString());
+        }
+
+        const values = data.map(d => d.value);
+
+        const ctx = document.getElementById('consumptionChart');
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        // Use a bar chart for yearly period, otherwise line chart
+        const chartType = period === 'yearly' ? 'bar' : 'line';
+
+        chartInstance = new Chart(ctx, {
+          type: chartType,
+          data: {
+            labels,
+            datasets: [{ 
+                label: 'Consumption', 
+                data: values, 
+                backgroundColor: chartType === 'bar' ? 'rgba(54,162,235,0.6)' : 'rgba(75,192,192,0.4)',
+                borderColor: 'rgba(75,192,192,1)',
+                borderWidth: 1,
+                fill: chartType !== 'bar'
+            }]
+          },
+          options: { scales: { y: { beginAtZero: true } } }
+        });
+      })
+      .catch(err => console.error('Failed to load chart data', err));
+}
+
+// initial load with default (daily)
+document.addEventListener('DOMContentLoaded', function() {
+    loadChart(getSelectedPeriod());
+
+    // attach change handlers to radios
+    document.querySelectorAll('input[name="period"]').forEach(r => {
+        r.addEventListener('change', () => loadChart(getSelectedPeriod()));
+    });
+});
+</script>
+
+<div class="mt-3">
+    <a asp-page="/Measures/Index" asp-route-IdMeasureDevice="@Model.IdMeasureDeviceOfInterest" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Measures
+    </a>
+</div>
