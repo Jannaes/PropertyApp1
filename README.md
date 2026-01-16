@@ -53,37 +53,6 @@ Vuokralainen kirjautuu palveluun asunnon omistajalta saamallaan käyttäjätunnu
 
 ---
 
-**Projektin rakenne**
-
-PropertyApp
-│
-├── Data
-│   └── PropertyContext.cs
-│
-├── Models
-│   ├── Apartment.cs
-│   ├── ApartmentUser.cs
-│   ├── Measure.cs
-│   ├── MeasureDevice.cs
-│   ├── Property.cs
-│   ├── User.cs
-│   └── Login.cs
-│
-├── Pages
-│   ├── Apartments
-│   ├── Measures
-│   ├── MeasureDevices
-│   ├── Properties
-│   ├── Users
-│   └── Login
-│
-├── wwwroot
-│   ├── css
-│   └── images
-│
-└── README.md
-
----
 
 **Sovelluksen käynnistäminen**
 
@@ -106,7 +75,7 @@ tietokantayhteytesi:
 
  Bash: dotnet ef database update
 
-	TAI
+	tai
 
  Package Manager Console: Update-Database 
 
