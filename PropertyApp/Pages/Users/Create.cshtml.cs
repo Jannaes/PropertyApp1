@@ -63,6 +63,6 @@ public class CreateModel : PageModel
         HttpContext.Session.SetString("FirstnameCurrentUser", User.Firstname);
         HttpContext.Session.SetString("LastnameCurrentUser", User.Lastname);
 
-        return RedirectToPage("Index");
+        return RedirectToPage("/Apartments/Index");
     }
 }
