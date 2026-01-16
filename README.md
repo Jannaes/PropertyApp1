@@ -51,6 +51,8 @@ HttpContext.Session.SetInt32("IdCurrentUser", user.IdUser);
 Käyttäjän (omistajan) täytyy ensin rekisteröityä sovellukseen, jonka jälkeen hän voi lisätä kiinteistöjä ja asuntoja.
 Vuokralainen kirjautuu palveluun asunnon omistajalta saamallaan käyttäjätunnuksella ja salasanalla.
 
+---
+
 **Projektin rakenne**
 
 PropertyApp
@@ -81,6 +83,7 @@ PropertyApp
 │
 └── README.md
 
+---
 
 **Sovelluksen käynnistäminen**
 
@@ -109,7 +112,7 @@ tietokantayhteytesi:
 
 - Käynnistä sovellus (F5)
 
-
+---
 
 **Tekijät**
 Projekti on toteutettu ryhmätyönä osana Tieto- ja viestintätekniikan perustutkinnon Ohjelmistokehittäjä-opintoja.
