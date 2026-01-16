@@ -7,9 +7,9 @@ namespace PropertyApp.Data;
 
 public partial class PropertyContext : DbContext
 {
-    public PropertyContext()
-    {
-    }
+    //public PropertyContext()
+    //{
+    //}
 
     public PropertyContext(DbContextOptions<PropertyContext> options)
         : base(options)

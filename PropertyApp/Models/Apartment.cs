@@ -18,4 +18,6 @@ public partial class Apartment
     public virtual ICollection<MeasureDevice> Measuredevices { get; set; } = new List<MeasureDevice>();
 
     public virtual ICollection<UserAccess> UserAccesses { get; set; } = new List<UserAccess>();
+
+ 
 }
