@@ -12,7 +12,7 @@ namespace PropertyApp.Pages.MeasureDevices
 {
     public class IndexModel : PageModel
     {
-        private readonly PropertyApp.Data.PropertyContext _context;
+        private readonly PropertyApp.Data.PropertyContext _context; // tietokantayhteys
 
         public IndexModel(PropertyApp.Data.PropertyContext context)
         {
@@ -28,16 +28,16 @@ namespace PropertyApp.Pages.MeasureDevices
 
 
         [BindProperty(SupportsGet = true)]
-        public int IdApartment { get; set; }
+        public int IdApartment { get; set; }  //IdApartment sidotaan URL:iin, jotta Razor Page tietää mistä IdApartment tulee
 
 
         #region-------------------------------ONGETASYNC---------------------------------------------------------------
         public async Task<IActionResult> OnGetAsync()
         {
 
-            Apartment = await _context.Apartments
+            Apartment = await _context.Apartments // Haetaan asunto
                 .Include(a => a.IdPropertyNavigation)  // Liitetään kiinteistötiedot asuntoon
-                .FirstOrDefaultAsync(a => a.IdApartment == IdApartment)
+                .FirstOrDefaultAsync(a => a.IdApartment == IdApartment) // Etsitään asunto IdApartmentin perusteella
                 ?? throw new InvalidOperationException("Apartment not found.");  // Apartment ei voi koskaan olla null (koska mittarit sidottu asuntoon, mutta varmuuden vuoksi tarkistus, koska koodiin tulee vihreä alleviivaus)
 
             if (Apartment == null)

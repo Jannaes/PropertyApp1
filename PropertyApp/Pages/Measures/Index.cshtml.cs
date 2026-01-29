@@ -12,15 +12,16 @@ namespace PropertyApp.Pages.Measures
 {
     public class IndexModel : PageModel
     {
-        private readonly PropertyApp.Data.PropertyContext _context;
+        private readonly PropertyApp.Data.PropertyContext _context;  // tietokantayhteys
 
         public IndexModel(PropertyApp.Data.PropertyContext context)
         {
             _context = context;
         }
 
-        [BindProperty(SupportsGet = true)]
-        public int IdApartment { get; set; }  // asunnon ID, koska mittarit sidottu tiettyyn asuntoon
+        // Bindatut ominaisuudet lomakkeelle ja URL:iin:
+        [BindProperty(SupportsGet = true)] // IdApartment sidotaan URL:iin, jotta Razor Page tietää mistä IdApartment tulee
+        public int IdApartment { get; set; }  // asunnon ID, koska mittarit sidottu tiettyyn asuntoon 
 
         [BindProperty(SupportsGet = true)]
         public int IdMeasureDevice { get; set; }  // määrittää minkä mittarin mittauksia näytetään
@@ -32,7 +33,8 @@ namespace PropertyApp.Pages.Measures
         public DateTime NewDate { get; set; } = DateTime.Today; // mittauspäivämäärä
 
 
-        public Apartment? Apartment { get; set; }
+        //Page Modelin ominaisuudet:
+        public Apartment? Apartment { get; set; } 
         public Property? Property { get; set; }
 
         public int CurrentUserId { get; set; }
@@ -130,7 +132,7 @@ namespace PropertyApp.Pages.Measures
 
             var measure = new Measure
             {
-                IdMeasureDevice = IdMeasureDevice,
+                IdMeasureDevice = IdMeasureDevice, //Käytetään BindPropertyllä sidottua arvoa
                 Amount = (decimal)Amount,
                 Date = NewDate,
                 IdUser = CurrentUserId
@@ -139,7 +141,7 @@ namespace PropertyApp.Pages.Measures
             _context.Measures.Add(measure);
             await _context.SaveChangesAsync();
 
-            return RedirectToPage(new { IdMeasureDevice = this.IdMeasureDevice });
+            return RedirectToPage(new { IdMeasureDevice = this.IdMeasureDevice }); // uudelleenlataus OnGetAsync:lle, jotta uusi mittaus näkyy listassa
         }
 
         #endregion
