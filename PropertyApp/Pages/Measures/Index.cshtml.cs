@@ -44,6 +44,7 @@ namespace PropertyApp.Pages.Measures
 
 
         #region -----------------------------ONGETASYNC---------------------------------------------------------------
+        // async mahdollistaa tietokantahaut ja muut "hitaat" operaatiot ilman että sovellus lukitsee säikeen tai hidastaa muita käyttäjiä
         public async Task<IActionResult> OnGetAsync(int idMeasureDevice)   // haetaan asunnon ID mittauslaitteesta, jotta back-nappi toimii (koska mittarit yhdistetty asuntoihin)
         {
 
@@ -55,7 +56,7 @@ namespace PropertyApp.Pages.Measures
             }
 
 
-            // Haetaan laite ja asunto + kiinteistö
+            // Haetaan laite ja asunto + kiinteistö tietokannasta
             CurrentDevice = await _context.MeasureDevices
                 .Include(d => d.IdApartmentNavigation)  // liitetään asunto mittauslaitteeseen
                     .ThenInclude(a => a.IdPropertyNavigation)  // liitetään asuntoon kiinteistö
